@@ -1,6 +1,6 @@
 # Elasticsearch-Playground
 
-## Install Docker
+### Install Docker
 
 Mac: https://docs.docker.com/docker-for-mac/install/
 
@@ -8,11 +8,9 @@ Windows: https://docs.docker.com/docker-for-windows/install/
 
 Skip this if you have docker already installed.
 
-## Project Setup
+### Start Docker
 
 Fork, clone and navigate to this repository.
-
-### Start Docker
 
 Execute: `docker-compose up --build -d`
 
