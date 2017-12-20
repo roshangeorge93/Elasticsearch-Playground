@@ -1,0 +1,166 @@
+# Create Index
+PUT movies
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "nGram_filter": {
+          "type": "nGram",
+            "min_gram": 2,
+            "max_gram": 20,
+            "token_chars": [
+              "letter",
+            "digit",
+            "punctuation",
+            "symbol"
+              ]
+        }
+      },
+      "analyzer": {
+        "nGram_analyzer": {
+          "type": "custom",
+          "tokenizer": "whitespace",
+          "filter": [
+            "lowercase",
+          "asciifolding",
+          "nGram_filter"
+            ]
+        },
+        "whitespace_analyzer": {
+          "type": "custom",
+          "tokenizer": "whitespace",
+          "filter": [
+            "lowercase",
+          "asciifolding"
+            ]
+        }
+      }
+    }
+  }
+}
+
+# Create document with properties
+PUT movies/_mapping/movie
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "analyzer": "nGram_analyzer",
+      "search_analyzer": "whitespace_analyzer"
+    },
+    "genre": {
+      "type": "keyword"
+    },
+    "imdb_rating": {
+      "type": "float"
+    },
+    "country": {
+      "type": "keyword"
+    },
+    "quality": {
+      "type":  "keyword"
+    },
+    "year": {
+      "type": "date",
+      "format": "yyyy"
+    },
+    "description": {
+      "type": "text"
+    },
+    "stars": {
+      "type": "text",
+      "index": false
+    },
+    "link": {
+      "type": "text",
+      "index": false
+    },
+    "img_src": {
+      "type": "text",
+      "index": false
+    }
+  }
+}
+
+
+# Suggestion call using search
+GET /movies/movie/_search
+{
+   "query": {
+      "match": {
+         "name": {
+            "query": "unle",
+            "operator": "and"
+         }
+      }
+   }
+}
+
+
+
+# Search call (multi fields)
+GET movies/movie/_search
+{
+  "query":{
+    "multi_match": {
+      "query": "un",
+      "fields": ["name", "description"]
+    }
+  }
+}
+
+# search results with filter
+GET movies/movie/_search
+{
+  "query":{
+    "bool":{
+      "filter": {
+        "bool" : {
+          "must" : [
+            {
+              "term": {
+                "year": 2016
+              }
+            },
+            {
+              "term": {
+                "quality": "HDRip"
+              }
+            }
+          ]
+        }
+      },
+      "must": {
+        "multi_match": {
+          "query": "unleashed",
+          "fields": ["name", "description"]
+        }
+      }
+    }
+  }
+}
+
+# search results with only filters
+GET movies/movie/_search
+{
+  "query":{
+    "bool":{
+      "filter": {
+        "bool" : {
+          "must" : [
+            {
+              "term": {
+                "year": 2017
+              }
+            },
+            {
+              "term": {
+                "quality": "HDRip"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
