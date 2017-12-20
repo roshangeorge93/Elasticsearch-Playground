@@ -34,3 +34,6 @@ Save and Quit: Press `Esc` Type `:wq` Press `Enter`
 ### Quit Docker
 
 Execute: `docker-compose down --remove-orphans`
+
+### Command to load the data to elasticsearch
+`curl -s -XPOST 'http://localhost:9200/_bulk' --data-binary @movie-data.jsonl --header "Content-Type:application/json"`
