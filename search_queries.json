@@ -1,0 +1,119 @@
+GET _cat/indices
+
+PUT movies
+
+PUT movies/_mapping/movie
+{
+  "properties": {
+    "title": {
+      "type": "text"
+    },
+    "director": {
+      "type": "text"
+    },
+    "year": {
+      "type": "integer"
+    }
+  }
+}
+
+POST movies/movie/1
+{
+  "title": "test1",
+  "director": "blah",
+  "year": 1972
+}
+POST movies/movie/2
+{
+  "title": "test2",
+  "director": "blah2",
+  "year": 1973
+}
+POST movies/movie/3
+{
+  "title": "test3",
+  "director": "blah3",
+  "year": 1972
+}
+# Search
+GET movies/movie/_search
+{
+  "query": {
+    "match": {
+      "director": "blah2"
+    }
+  }
+}
+# Limit search to specific fields
+GET movies/movie/_search
+{
+  "query": {
+    "query_string": {
+      "query": "blah2",
+      "fields": ["director"]
+    }
+  }
+}
+# restrict source
+GET movies/movie/_search
+{
+  "_source": {
+      "includes": [ "title" ]
+  },
+  "query": {
+    "query_string": {
+      "query": "blah2",
+      "fields": ["director"]
+    }
+  }
+}
+# Count API
+
+# Query String
+GET movies/movie/_search
+{
+  "query": {
+    "query_string": {
+      "query": "blah2 OR blah",
+      "fields": ["director"]
+    }
+  }
+}
+# Match query
+# Match all
+GET movies/movie/_search
+{
+  "query": {
+    "match": {
+      "_all": "blah"
+    }
+  }
+}
+# Match query
+# Match specific field
+GET movies/movie/_search
+{
+  "query": {
+    "match": {
+      "director": "blah"
+    }
+  }
+}
+# Filter
+GET movies/movie/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "term": {
+          "year": 1972
+        }
+      },
+      "must": [
+        {"match": {
+          "director": "blah"
+        }}
+      ]
+    }
+  }
+}
